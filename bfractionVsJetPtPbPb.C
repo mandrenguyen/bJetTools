@@ -1227,7 +1227,7 @@ Enumerations count(double ptMin, double ptMax, char *discr, double workingPoint,
   delete fBMC;
   delete fCMC; 
   */
-
+  // a comment
   delete hTaggedLJetsMC;
   delete hTaggedCJetsMC;
   delete hTaggedBJetsMC;
