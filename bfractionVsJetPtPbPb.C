@@ -159,20 +159,23 @@ void bfractionVsJetPtPbPb(char *tagger="discr_ssvHighEff", double workingPoint=2
   gStyle->SetTitleOffset(1.5,"xy"); 
   */
 
-  fQCDMC = new TFile("newHistos/PbPbQCDMC_pt30by3_ipHICalibCentWeight_noTrig.root"); 
-  fBMC = new TFile("newHistos/PbPbBMC_pt30by3_ipHICalibCentWeight_noTrig.root"); 
-  fCMC = new TFile("newHistos/PbPbCMC_pt30by3_ipHICalibCentWeight_noTrig.root"); 
-  fdata = new TFile("newHistos/PbPbdata_pt30by3_jpHICalibRepass_withDup_PU_jet6580.root");
+  fQCDMC = new TFile("histos/PbPbQCDMC_pt30by3_ipHICalibCentWeight_noTrig.root"); 
+  fBMC = new TFile("histos/PbPbBMC_pt30by3_ipHICalibCentWeight_noTrig.root"); 
+  fCMC = new TFile("histos/PbPbCMC_pt30by3_ipHICalibCentWeight_noTrig.root"); 
+  fdata = new TFile("histos/PbPbdata_pt30by3_jpHICalibRepass_withDup_PU_jet6580.root");
+
   
   int doLTJP=1;
   int doLTCSV=0;
 
-  //const int nBins = 6;
+  const int nBins = 6;
   //double ptBin[nBins+1] = {55,65,80,100,120,150,200};
+  //double ptBin[nBins+1] = {55,70,85,100,120,150,200};
+  double ptBin[nBins+1] = {60,70,85,105,130,170,250};
   //const int nBins = 4;
   //double ptBin[nBins+1] = {80,100,120,150,200};
-  const int nBins = 1;
-  double ptBin[nBins+1] = {45,55};
+  //const int nBins = 1;
+  //double ptBin[nBins+1] = {60,70};
   
   Double_t bPurMC, bPurData, bEffMC, bEffDataLTJP, bEffDataLTCSV, taggedFracData, bFracMC, bFracData, bFracDataLTJP, bFracDataLTCSV, bFracJPdirect;
   Double_t bPurMCError, bPurDataError, bEffMCError, bEffDataLTJPError, bEffDataLTCSVError, taggedFracDataError, bFracMCError, bFracDataError, bFracDataLTJPError, bFracDataLTCSVError, bFracJPdirectError;
@@ -472,8 +475,8 @@ void bfractionVsJetPtPbPb(char *tagger="discr_ssvHighEff", double workingPoint=2
   legFrac->Draw();
   //cBFraction->SaveAs("ssvheFracPbPb.pdf");
 
-  /*
-  TFile *fout = new TFile(Form("outputTowardsFinal/NewFormatV3_bFractionMCTemplate_ppPbPb1_%sat%.1fFixCL%d_bin_%d_%d_eta_%d_%d.root",taggerName,workingPoint,fixCL,cbinlo,cbinhi,(int)etalo,(int)etahi),"recreate");
+
+  TFile *fout = new TFile(Form("outputTowardsFinal/AltBinningV5_bFractionMCTemplate_ppPbPb1_%sat%.1fFixCL%d_bin_%d_%d_eta_%d_%d.root",taggerName,workingPoint,fixCL,cbinlo,cbinhi,(int)etalo,(int)etahi),"recreate");
 
   hBFractionMC->Write();
   hBFractionData->Write();
@@ -487,7 +490,7 @@ void bfractionVsJetPtPbPb(char *tagger="discr_ssvHighEff", double workingPoint=2
   hBEfficiencyMC->Write();
   hBEfficiencyDataLTJP->Write();
   fout->Close();
-  */
+
   //c1->SaveAs(Form("gifs/svtxMassFit_%s.gif",fixCL?"CLfixed":"CLfree"));
   //c2->SaveAs(Form("gifs/jpDirectFit_%s.gif",fixCL?"CLfixed":"CLfree"));
   //c3->SaveAs(Form("gifs/jpBeforeTag_%s.gif",fixCL?"CLfixed":"CLfree"));
@@ -572,32 +575,32 @@ RooRealVar *bfractionFit(parameters p, char *var, char *discr, double minXdiscr,
 
   TH1D *hB = new TH1D("hB","hB",nhistBins,minXvar,maxXvar);
   hB->Sumw2();
-  tBMC->Draw(Form("%s>>hB",var),Form("weight*(abs(refparton_flavorForB)==5&&jtpt>=%f&&jtpt<%f&&%s>=%f&&%s<%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f&&trigIndex>=2&&pthat>%f)",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr,cbinlo,cbinhi,etalo,etahi,ptHatMin));
-  //tBMC->Draw(Form("%s>>hB",var),Form("weight*(abs(refparton_flavorForB)==5&&jtpt>=%f&&jtpt<%f&&%s>=%f&&%s<%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f)",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr,cbinlo,cbinhi,etalo,etahi));
+  tBMC->Draw(Form("%s>>hB",var),Form("weight*(abs(refparton_flavorForB)==5&&jtptB>=%f&&jtptB<%f&&%s>=%f&&%s<%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f&&jet65&&pthat>%f&&refpt>0)",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr,cbinlo,cbinhi,etalo,etahi,ptHatMin));
+  //tBMC->Draw(Form("%s>>hB",var),Form("weight*(abs(refparton_flavorForB)==5&&jtptB>=%f&&jtptB<%f&&%s>=%f&&%s<%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f)",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr,cbinlo,cbinhi,etalo,etahi));
 
   fixEmpty(hB);
   
   TH1D *hC = new TH1D("hC","hC",nhistBins,minXvar,maxXvar);
   hC->Sumw2();
-  tCMC->Draw(Form("%s>>hC",var),Form("weight*(abs(refparton_flavorForB)==4&&jtpt>=%f&&jtpt<%f&&%s>=%f&&%s<%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f&&trigIndex>=2&&pthat>%f)",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr,cbinlo,cbinhi,etalo,etahi,ptHatMin));
-  //tCMC->Draw(Form("%s>>hC",var),Form("weight*(abs(refparton_flavorForB)==4&&jtpt>=%f&&jtpt<%f&&%s>=%f&&%s<%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f)",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr,cbinlo,cbinhi,etalo,etahi));
+  tCMC->Draw(Form("%s>>hC",var),Form("weight*(abs(refparton_flavorForB)==4&&jtptB>=%f&&jtptB<%f&&%s>=%f&&%s<%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f&&jet65&&pthat>%f&&refpt>0)",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr,cbinlo,cbinhi,etalo,etahi,ptHatMin));
+  //tCMC->Draw(Form("%s>>hC",var),Form("weight*(abs(refparton_flavorForB)==4&&jtptB>=%f&&jtptB<%f&&%s>=%f&&%s<%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f)",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr,cbinlo,cbinhi,etalo,etahi));
   fixEmpty(hC);
 
   TH1D *hL = new TH1D("hL","hL",nhistBins,minXvar,maxXvar);
   hL->Sumw2();
-  tQCDMC->Draw(Form("%s>>hL",var),Form("weight*(abs(refparton_flavorForB)!=5&&abs(refparton_flavorForB)!=4&&abs(refparton_flavorForB)<99&&jtpt>=%f&&jtpt<%f&&%s>=%f&&%s<%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f&&trigIndex>=2&&pthat>%f)",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr,cbinlo,cbinhi,etalo,etahi,ptHatMin));
-  //tQCDMC->Draw(Form("%s>>hL",var),Form("weight*(abs(refparton_flavorForB)!=5&&abs(refparton_flavorForB)!=4&&abs(refparton_flavorForB)<99&&jtpt>=%f&&jtpt<%f&&%s>=%f&&%s<%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f)",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr,cbinlo,cbinhi,etalo,etahi));
+  tQCDMC->Draw(Form("%s>>hL",var),Form("weight*(abs(refparton_flavorForB)!=5&&abs(refparton_flavorForB)!=4&&abs(refparton_flavorForB)<99&&jtptB>=%f&&jtptB<%f&&%s>=%f&&%s<%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f&&jet65&&pthat>%f&&refpt>0)",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr,cbinlo,cbinhi,etalo,etahi,ptHatMin));
+  //tQCDMC->Draw(Form("%s>>hL",var),Form("weight*(abs(refparton_flavorForB)!=5&&abs(refparton_flavorForB)!=4&&abs(refparton_flavorForB)<99&&jtptB>=%f&&jtptB<%f&&%s>=%f&&%s<%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f)",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr,cbinlo,cbinhi,etalo,etahi));
   fixEmpty(hL);
   /*
   TH1D *hCaux = new TH1D("hCaux","",nhistBins,minXvar,maxXvar);
   hCaux->Sumw2();
-  tQCDMC->Draw(Form("%s>>hCaux",var),Form("weight*(abs(refparton_flavorForB)==4&&jtpt>=%f&&jtpt<%f&&%s>=%f&&%s<%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f&&trigIndex>=2)",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr,cbinlo,cbinhi,etalo,etahi));
+  tQCDMC->Draw(Form("%s>>hCaux",var),Form("weight*(abs(refparton_flavorForB)==4&&jtptB>=%f&&jtptB<%f&&%s>=%f&&%s<%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f&&jet65)",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr,cbinlo,cbinhi,etalo,etahi));
   fixEmpty(hCaux);
   */
   /*
   TH1D *hCL = new TH1D("hCL","",nhistBins,minXvar,maxXvar);
   hCL->Sumw2();
-  tQCDMC->Draw(Form("%s>>hCL",var),Form("weight*(abs(refparton_flavorForB)!=5&&abs(refparton_flavorForB)<99&&jtpt>=%f&&jtpt<%f&&%s>=%f&&%s<%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f&&trigIndex>=2)",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr,cbinlo,cbinhi,etalo,etahi));
+  tQCDMC->Draw(Form("%s>>hCL",var),Form("weight*(abs(refparton_flavorForB)!=5&&abs(refparton_flavorForB)<99&&jtptB>=%f&&jtptB<%f&&%s>=%f&&%s<%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f&&jet65)",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr,cbinlo,cbinhi,etalo,etahi));
   fixEmpty(hCL);
   //*/
   //*
@@ -611,7 +614,7 @@ RooRealVar *bfractionFit(parameters p, char *var, char *discr, double minXdiscr,
 
   // --- Observable ---
   RooRealVar s(var,var,0,minXvar,maxXvar);
-  RooRealVar jtpt("jtpt","jtpt",0,ptMin,ptMax);
+  RooRealVar jtptB("jtptB","jtptB",0,ptMin,ptMax);
   RooRealVar discriminator(discr,discr,0,minXdiscr,maxXdiscr);
   RooRealVar bin("bin","bin",0,0,40); 
   RooRealVar jteta("jteta","jteta",0,-2,2); 
@@ -641,14 +644,7 @@ RooRealVar *bfractionFit(parameters p, char *var, char *discr, double minXdiscr,
 
   double fracGuess=0.3;
   if(var != "svmtx") fracGuess =0.01;
-  /*
-  double bGuess = 0.03;
-  double cGuess = 0.1;
-  if(var != "svmtx"){
-    bGuess =0.01;
-    cGuess =0.05;
-  }
-  */
+
   RooRealVar *Bfraction = new RooRealVar("Bfraction","#signal events",fracGuess,0.,1);
   RooRealVar *Cfraction = new RooRealVar("Cfraction","#background events",fracGuess,0.,1); 
   RooAddPdf *model;
@@ -658,9 +654,9 @@ RooRealVar *bfractionFit(parameters p, char *var, char *discr, double minXdiscr,
 
   // --- Data sample ---
   RooDataSet *data = NULL;
-  if(var == discr) data = new  RooDataSet("data","data",tdata,RooArgSet(s,jtpt,jteta,bin,weight),Form("jtpt>=%f&&jtpt<%f&&%s>=%f&&%s<%f&&abs(jteta)>%f&&abs(jteta)<%f&&bin>=%d&&bin<%d",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr,etalo,etahi,cbinlo,cbinhi),"weight");
-  else data = new  RooDataSet("data","data",tdata,RooArgSet(s,jtpt,jteta,bin,discriminator,weight),Form("jtpt>=%f&&jtpt<%f&&%s>=%f&&%s<%f&&abs(jteta)>%f&&abs(jteta)<%f&&bin>=%d&&bin<%d",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr,etalo,etahi,cbinlo,cbinhi),"weight");
-  //RooDataSet *data = new  RooDataSet("data","data",tdata,RooArgSet(s,jtpt,jteta,bin,discriminator),Form("jtpt>=%f&&jtpt<%f&&%s>=%f&&%s<%f&&abs(jteta)>%f&&abs(jteta)<%f&&bin>=%d&&bin<%d",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr,etalo,etahi,cbinlo,cbinhi));
+  if(var == discr) data = new  RooDataSet("data","data",tdata,RooArgSet(s,jtptB,jteta,bin,weight),Form("jtptB>=%f&&jtptB<%f&&%s>=%f&&%s<%f&&abs(jteta)>%f&&abs(jteta)<%f&&bin>=%d&&bin<%d",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr,etalo,etahi,cbinlo,cbinhi),"weight");
+  else data = new  RooDataSet("data","data",tdata,RooArgSet(s,jtptB,jteta,bin,discriminator,weight),Form("jtptB>=%f&&jtptB<%f&&%s>=%f&&%s<%f&&abs(jteta)>%f&&abs(jteta)<%f&&bin>=%d&&bin<%d",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr,etalo,etahi,cbinlo,cbinhi),"weight");
+  //RooDataSet *data = new  RooDataSet("data","data",tdata,RooArgSet(s,jtptB,jteta,bin,discriminator),Form("jtptB>=%f&&jtptB<%f&&%s>=%f&&%s<%f&&abs(jteta)>%f&&abs(jteta)<%f&&bin>=%d&&bin<%d",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr,etalo,etahi,cbinlo,cbinhi));
 
   
   /*
@@ -673,9 +669,9 @@ RooRealVar *bfractionFit(parameters p, char *var, char *discr, double minXdiscr,
   else RooAddPdf model("model","",RooArgList(bottom,charm,light),RooArgList(Bfraction,Cfraction));  
 
   // --- Data sample ---
-  //RooDataSet *data = new RooDataSet("data","data",tdata,RooArgSet(s,jtpt,discriminator),Form("jtpt>=%f&&jtpt<%f&&%s>=%f&&%s<%f",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr));
-  //RooDataSet *data = new RooDataSet("data","data",tdata,RooArgSet(s,jtpt,discriminator),Form("jtpt>=%f&&jtpt<%f&&%s>=%f&&%s<%f&&bin>=%d&&bin<%d&&fabs(jteta)>%f&&fabs(jteta)<%f",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr,cbinlo,cbinhi,etalo,etahi));
-  RooDataSet *data = new RooDataSet("data","data",tdata,RooArgSet(s,jtpt,jteta,bin,discriminator),Form("jtpt>=%f&&jtpt<%f&&%s>=%f&&%s<%f&&abs(jteta)>%f&&abs(jteta)<%f&&bin>=%d&&bin<%d",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr,etalo,etahi,cbinlo,cbinhi));
+  //RooDataSet *data = new RooDataSet("data","data",tdata,RooArgSet(s,jtptB,discriminator),Form("jtptB>=%f&&jtptB<%f&&%s>=%f&&%s<%f",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr));
+  //RooDataSet *data = new RooDataSet("data","data",tdata,RooArgSet(s,jtptB,discriminator),Form("jtptB>=%f&&jtptB<%f&&%s>=%f&&%s<%f&&bin>=%d&&bin<%d&&fabs(jteta)>%f&&fabs(jteta)<%f",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr,cbinlo,cbinhi,etalo,etahi));
+  RooDataSet *data = new RooDataSet("data","data",tdata,RooArgSet(s,jtptB,jteta,bin,discriminator),Form("jtptB>=%f&&jtptB<%f&&%s>=%f&&%s<%f&&abs(jteta)>%f&&abs(jteta)<%f&&bin>=%d&&bin<%d",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr,etalo,etahi,cbinlo,cbinhi));
   */
   // unfucked?
 
@@ -756,17 +752,17 @@ RooRealVar *bfractionFit(parameters p, char *var, char *discr, double minXdiscr,
   hData[counter]->Sumw2();
   hMCL[counter]->Sumw2();  hMCB[counter]->Sumw2();  hMCC[counter]->Sumw2(); hMCLC[counter]->Sumw2();
 
-  tBMC->Draw(Form("%s>>hMCB_%d",var,counter),Form("weight*(abs(refparton_flavorForB)==5&&jtpt>=%f&&jtpt<%f&&%s>=%f&&%s<%f&&trigIndex>=2&&pthat>%f)",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr,ptHatMin),"goff");
-  tCMC->Draw(Form("%s>>hMCC_%d",var,counter),Form("weight*(abs(refparton_flavorForB)==4&&jtpt>=%f&&jtpt<%f&&%s>=%f&&%s<%f&&trigIndex>=2&&pthat>%f)",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr,ptHatMin),"goff");
-  tQCDMC->Draw(Form("%s>>hMCL_%d",var,counter),Form("weight*(abs(refparton_flavorForB)!=5&&abs(refparton_flavorForB)!=4&&abs(refparton_flavorForB)<99&&jtpt>=%f&&jtpt<%f&&%s>=%f&&%s<%f&&trigIndex>=2&&pthat>%f)",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr,ptHatMin),"goff");
+  tBMC->Draw(Form("%s>>hMCB_%d",var,counter),Form("weight*(abs(refparton_flavorForB)==5&&jtptB>=%f&&jtptB<%f&&%s>=%f&&%s<%f&&jet65&&pthat>%f&&refpt>0)",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr,ptHatMin),"goff");
+  tCMC->Draw(Form("%s>>hMCC_%d",var,counter),Form("weight*(abs(refparton_flavorForB)==4&&jtptB>=%f&&jtptB<%f&&%s>=%f&&%s<%f&&jet65&&pthat>%f&&refpt>0)",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr,ptHatMin),"goff");
+  tQCDMC->Draw(Form("%s>>hMCL_%d",var,counter),Form("weight*(abs(refparton_flavorForB)!=5&&abs(refparton_flavorForB)!=4&&abs(refparton_flavorForB)<99&&jtptB>=%f&&jtptB<%f&&%s>=%f&&%s<%f&&jet65&&pthat>%f&&refpt>0)",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr,ptHatMin),"goff");
 
   /*
-  tBMC->Draw(Form("%s>>hMCB_%d",var,counter),Form("weight*(abs(refparton_flavorForB)==5&&jtpt>=%f&&jtpt<%f&&%s>=%f&&%s<%f)",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr),"goff");
-  tCMC->Draw(Form("%s>>hMCC_%d",var,counter),Form("weight*(abs(refparton_flavorForB)==4&&jtpt>=%f&&jtpt<%f&&%s>=%f&&%s<%f)",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr),"goff");
-  tQCDMC->Draw(Form("%s>>hMCL_%d",var,counter),Form("weight*(abs(refparton_flavorForB)!=5&&abs(refparton_flavorForB)!=4&&abs(refparton_flavorForB)<99&&jtpt>=%f&&jtpt<%f&&%s>=%f&&%s<%f)",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr),"goff");
+  tBMC->Draw(Form("%s>>hMCB_%d",var,counter),Form("weight*(abs(refparton_flavorForB)==5&&jtptB>=%f&&jtptB<%f&&%s>=%f&&%s<%f)",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr),"goff");
+  tCMC->Draw(Form("%s>>hMCC_%d",var,counter),Form("weight*(abs(refparton_flavorForB)==4&&jtptB>=%f&&jtptB<%f&&%s>=%f&&%s<%f)",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr),"goff");
+  tQCDMC->Draw(Form("%s>>hMCL_%d",var,counter),Form("weight*(abs(refparton_flavorForB)!=5&&abs(refparton_flavorForB)!=4&&abs(refparton_flavorForB)<99&&jtptB>=%f&&jtptB<%f&&%s>=%f&&%s<%f)",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr),"goff");
   */
-  tdata->Draw(Form("%s>>hData_%d",var,counter),Form("weight*(jtpt>=%f&&jtpt<%f&&%s>=%f&&%s<%f)",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr),"goff");
-  //tdata->Draw(Form("%s>>hData_%d",var,counter),Form("(jtpt>=%f&&jtpt<%f&&%s>=%f&&%s<%f)",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr),"goff");
+  tdata->Draw(Form("%s>>hData_%d",var,counter),Form("weight*(jtptB>=%f&&jtptB<%f&&%s>=%f&&%s<%f)",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr),"goff");
+  //tdata->Draw(Form("%s>>hData_%d",var,counter),Form("(jtptB>=%f&&jtptB<%f&&%s>=%f&&%s<%f)",ptMin,ptMax,discr,minXdiscr,discr,maxXdiscr),"goff");
   hMCLC[counter]->Add( hMCL[counter]);
   hMCLC[counter]->Add( hMCC[counter]);
   fixEmpty(hMCB[counter]); fixEmpty(hMCC[counter]); fixEmpty(hMCL[counter]); fixEmpty(hMCLC[counter]); fixEmpty(hData[counter]);
@@ -977,13 +973,9 @@ RooRealVar *bfractionFit(parameters p, char *var, char *discr, double minXdiscr,
   if (var =="svtxm") varLabel = "SVmass";
   if (var =="discr_prob") varLabel = "JP";
   if (var =="discr_prob" && minXdiscr==2 ) varLabel ="JPtagged";
-  char *ptLabel;
-  if (ptMin==55 && ptMax ==65) ptLabel="55_65";
-  if (ptMin==65 && ptMax ==80) ptLabel="65_80";
-  if (ptMin==80 && ptMax ==100) ptLabel="80_100";
-  if (ptMin==100 && ptMax ==120) ptLabel="100_120";
-  if (ptMin==120 && ptMax ==150) ptLabel="120_150";
-  if (ptMin==150 && ptMax ==200) ptLabel="150_200";
+
+  //char *ptLabel;
+  //sprintf(ptLabel,"%i_%i",(int)ptMin,(int)ptMax);
 
   //cout<<"file going to :"<<Form("PDFS/fitPbPb_%s_%s_%s.pdf",varLabel,fixCLlabel,ptLabel)<<endl;
   //if (var =="svtxm"){
@@ -993,15 +985,15 @@ RooRealVar *bfractionFit(parameters p, char *var, char *discr, double minXdiscr,
   /*
   if(!fixCL){
     if (!printEach){
-      if (counter<19) can1[counter]->Print("PDFS/bTagStackedHistos_nofixCL_NewFormatV2.pdf(","pdf");
-      if (counter==19) can1[counter]->Print("PDFS/bTagStackedHistos_nofixCL_NewFormatV2.pdf)","pdf");
+      if (counter<17) can1[counter]->Print("PDFS/bTagStackedHistos_nofixCL_NewFormatV4.pdf(","pdf");
+      if (counter==17) can1[counter]->Print("PDFS/bTagStackedHistos_nofixCL_NewFormatV4.pdf)","pdf");
     }
 
   }
   if(fixCL){
     if (!printEach){
-      if (counter<19) can1[counter]->Print("PDFS/bTagStackedHistos_fixCL_NewFormatV2.pdf(","pdf");
-      if (counter==19) can1[counter]->Print("PDFS/bTagStackedHistos_fixCL_NewFormatV2.pdf)","pdf");
+      if (counter<17) can1[counter]->Print("PDFS/bTagStackedHistos_fixCL_NewFormatV4.pdf(","pdf");
+      if (counter==17) can1[counter]->Print("PDFS/bTagStackedHistos_fixCL_NewFormatV4.pdf)","pdf");
     }
   }
   */
@@ -1010,13 +1002,13 @@ RooRealVar *bfractionFit(parameters p, char *var, char *discr, double minXdiscr,
 
   
   // --- Save canvas ---
-  TString path = Form("gifs/%s_jtpt%.0fto%.0f_%s%.2fto%.2f_%s.gif",var,ptMin,ptMax,discr,minXdiscr,maxXdiscr,fixCL?"CLfixed":"CLfree");
+  TString path = Form("gifs/%s_jtptB%.0fto%.0f_%s%.2fto%.2f_%s.gif",var,ptMin,ptMax,discr,minXdiscr,maxXdiscr,fixCL?"CLfixed":"CLfree");
   //cROOFIT->SaveAs(path);
 
   // ========== Toy check on MC template ==========
   if (toyMC) {
      TH1F *hToyResult = new TH1F("hToyResult","",200,0,Bfraction->getVal()*2);
-     char *pathToy = Form("toyMC/jtpt%.0fto%.0f_%s%.2fto%.2f_%s",ptMin,ptMax,discr,minXdiscr,maxXdiscr,fixCL?"CLfixed":"CLfree");
+     char *pathToy = Form("toyMC/jtptB%.0fto%.0f_%s%.2fto%.2f_%s",ptMin,ptMax,discr,minXdiscr,maxXdiscr,fixCL?"CLfixed":"CLfree");
      TCanvas *cToy = new TCanvas("cToy",pathToy,700,600);
      int nExp = 100;
      for (int iExp=0;iExp<nExp;iExp++) {
@@ -1047,8 +1039,8 @@ RooRealVar *bfractionFit(parameters p, char *var, char *discr, double minXdiscr,
 	delete hCLToy;
      }	
      hToyResult->Draw();
-     cToy->SaveAs(Form("toyMC/jtpt_cent_%.0f-%.0f_%.0fto%.0f_%s%.2fto%.2f_%s.gif",cbinlo*2.5,cbinhi*2.5,ptMin,ptMax,discr,minXdiscr,maxXdiscr,fixCL?"CLfixed":"CLfree"));
-     cToy->SaveAs(Form("toyMC/jtpt_cent_%.0f-%.0f_%.0fto%.0f_%s%.2fto%.2f_%s.C",cbinlo*2.5,cbinhi*2.5,ptMin,ptMax,discr,minXdiscr,maxXdiscr,fixCL?"CLfixed":"CLfree"));
+     cToy->SaveAs(Form("toyMC/jtptB_cent_%.0f-%.0f_%.0fto%.0f_%s%.2fto%.2f_%s.gif",cbinlo*2.5,cbinhi*2.5,ptMin,ptMax,discr,minXdiscr,maxXdiscr,fixCL?"CLfixed":"CLfree"));
+     cToy->SaveAs(Form("toyMC/jtptB_cent_%.0f-%.0f_%.0fto%.0f_%s%.2fto%.2f_%s.C",cbinlo*2.5,cbinhi*2.5,ptMin,ptMax,discr,minXdiscr,maxXdiscr,fixCL?"CLfixed":"CLfree"));
      delete hToyResult;
      delete cToy;
   }  
@@ -1138,18 +1130,18 @@ Enumerations count(double ptMin, double ptMax, char *discr, double workingPoint,
 
   TH1D *hTaggedLJetsMC = new TH1D("hTaggedLJetsMC","hTaggedLJetsMC",1,ptMin,ptMax);
   hTaggedLJetsMC->Sumw2();
-  tQCDMC->Draw("jtpt>>hTaggedLJetsMC",Form("weight*(%s>=%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f&&abs(refparton_flavorForB)!=4&&abs(refparton_flavorForB)!=5&&trigIndex>=2)",discr,workingPoint,cbinlo,cbinhi,etalo,etahi));
-  //tQCDMC->Draw("jtpt>>hTaggedLJetsMC",Form("weight*(%s>=%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f&&abs(refparton_flavorForB)!=4&&abs(refparton_flavorForB)!=5)",discr,workingPoint,cbinlo,cbinhi,etalo,etahi));
+  tQCDMC->Draw("jtptB>>hTaggedLJetsMC",Form("weight*(%s>=%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f&&abs(refparton_flavorForB)!=4&&abs(refparton_flavorForB)!=5&&jet65)",discr,workingPoint,cbinlo,cbinhi,etalo,etahi));
+  //tQCDMC->Draw("jtptB>>hTaggedLJetsMC",Form("weight*(%s>=%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f&&abs(refparton_flavorForB)!=4&&abs(refparton_flavorForB)!=5)",discr,workingPoint,cbinlo,cbinhi,etalo,etahi));
 
   TH1D *hTaggedCJetsMC = new TH1D("hTaggedCJetsMC","hTaggedCJetsMC",1,ptMin,ptMax);
   hTaggedCJetsMC->Sumw2();
-  tCMC->Draw("jtpt>>hTaggedCJetsMC",Form("weight*(%s>=%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f&&abs(refparton_flavorForB)==4&&trigIndex>=2)",discr,workingPoint,cbinlo,cbinhi,etalo,etahi));
-  //tCMC->Draw("jtpt>>hTaggedCJetsMC",Form("weight*(%s>=%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f&&abs(refparton_flavorForB)==4)",discr,workingPoint,cbinlo,cbinhi,etalo,etahi));
+  tCMC->Draw("jtptB>>hTaggedCJetsMC",Form("weight*(%s>=%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f&&abs(refparton_flavorForB)==4&&jet65)",discr,workingPoint,cbinlo,cbinhi,etalo,etahi));
+  //tCMC->Draw("jtptB>>hTaggedCJetsMC",Form("weight*(%s>=%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f&&abs(refparton_flavorForB)==4)",discr,workingPoint,cbinlo,cbinhi,etalo,etahi));
   
   TH1D *hTaggedBJetsMC = new TH1D("hTaggedBJetsMC","hTaggedBJetsMC",1,ptMin,ptMax);
   hTaggedBJetsMC->Sumw2();
-  tBMC->Draw("jtpt>>hTaggedBJetsMC",Form("weight*(%s>=%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f&&abs(refparton_flavorForB)==5&&trigIndex>=2)",discr,workingPoint,cbinlo,cbinhi,etalo,etahi));
-  //tBMC->Draw("jtpt>>hTaggedBJetsMC",Form("weight*(%s>=%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f&&abs(refparton_flavorForB)==5)",discr,workingPoint,cbinlo,cbinhi,etalo,etahi));
+  tBMC->Draw("jtptB>>hTaggedBJetsMC",Form("weight*(%s>=%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f&&abs(refparton_flavorForB)==5&&jet65)",discr,workingPoint,cbinlo,cbinhi,etalo,etahi));
+  //tBMC->Draw("jtptB>>hTaggedBJetsMC",Form("weight*(%s>=%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f&&abs(refparton_flavorForB)==5)",discr,workingPoint,cbinlo,cbinhi,etalo,etahi));
 
   
   TH1F *hTaggedJetsMC = (TH1F*)hTaggedLJetsMC->Clone("hTaggedJetsMC");
@@ -1160,18 +1152,18 @@ Enumerations count(double ptMin, double ptMax, char *discr, double workingPoint,
 
   TH1D *hUntaggedLJetsMC = new TH1D("hUntaggedLJetsMC","hUntaggedLJetsMC",1,ptMin,ptMax);
   hUntaggedLJetsMC->Sumw2();
-  tQCDMC->Draw("jtpt>>hUntaggedLJetsMC",Form("weight*(%s<%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f&&abs(refparton_flavorForB)!=4&&abs(refparton_flavorForB)!=5&&trigIndex>=2&&pthat>%f)",discr,workingPoint,cbinlo,cbinhi,etalo,etahi,ptHatMin));
-  //tQCDMC->Draw("jtpt>>hUntaggedLJetsMC",Form("weight*(%s<%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f&&abs(refparton_flavorForB)!=4&&abs(refparton_flavorForB)!=5)",discr,workingPoint,cbinlo,cbinhi,etalo,etahi));
+  tQCDMC->Draw("jtptB>>hUntaggedLJetsMC",Form("weight*(%s<%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f&&abs(refparton_flavorForB)!=4&&abs(refparton_flavorForB)!=5&&jet65&&pthat>%f&&refpt>0)",discr,workingPoint,cbinlo,cbinhi,etalo,etahi,ptHatMin));
+  //tQCDMC->Draw("jtptB>>hUntaggedLJetsMC",Form("weight*(%s<%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f&&abs(refparton_flavorForB)!=4&&abs(refparton_flavorForB)!=5)",discr,workingPoint,cbinlo,cbinhi,etalo,etahi));
 
   TH1D *hUntaggedCJetsMC = new TH1D("hUntaggedCJetsMC","hUntaggedCJetsMC",1,ptMin,ptMax);
   hUntaggedCJetsMC->Sumw2();
-  tCMC->Draw("jtpt>>hUntaggedCJetsMC",Form("weight*(%s<%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f&&abs(refparton_flavorForB)==4&&trigIndex>=2&&pthat>%f)",discr,workingPoint,cbinlo,cbinhi,etalo,etahi,ptHatMin));
-  //tCMC->Draw("jtpt>>hUntaggedCJetsMC",Form("weight*(%s<%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f&&abs(refparton_flavorForB)==4)",discr,workingPoint,cbinlo,cbinhi,etalo,etahi));
+  tCMC->Draw("jtptB>>hUntaggedCJetsMC",Form("weight*(%s<%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f&&abs(refparton_flavorForB)==4&&jet65&&pthat>%f&&refpt>0)",discr,workingPoint,cbinlo,cbinhi,etalo,etahi,ptHatMin));
+  //tCMC->Draw("jtptB>>hUntaggedCJetsMC",Form("weight*(%s<%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f&&abs(refparton_flavorForB)==4)",discr,workingPoint,cbinlo,cbinhi,etalo,etahi));
   
   TH1D *hUntaggedBJetsMC = new TH1D("hUntaggedBJetsMC","hUntaggedBJetsMC",1,ptMin,ptMax);
   hUntaggedBJetsMC->Sumw2();
-  tBMC->Draw("jtpt>>hUntaggedBJetsMC",Form("weight*(%s<%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f&&abs(refparton_flavorForB)==5&&trigIndex>=2&&pthat>%f)",discr,workingPoint,cbinlo,cbinhi,etalo,etahi,ptHatMin));
-  //tBMC->Draw("jtpt>>hUntaggedBJetsMC",Form("weight*(%s<%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f&&abs(refparton_flavorForB)==5)",discr,workingPoint,cbinlo,cbinhi,etalo,etahi));
+  tBMC->Draw("jtptB>>hUntaggedBJetsMC",Form("weight*(%s<%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f&&abs(refparton_flavorForB)==5&&jet65&&pthat>%f&&refpt>0)",discr,workingPoint,cbinlo,cbinhi,etalo,etahi,ptHatMin));
+  //tBMC->Draw("jtptB>>hUntaggedBJetsMC",Form("weight*(%s<%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f&&abs(refparton_flavorForB)==5)",discr,workingPoint,cbinlo,cbinhi,etalo,etahi));
   
   TH1F *hUntaggedJetsMC = (TH1F*)hUntaggedLJetsMC->Clone("hUntaggedJetsMC");
   
@@ -1182,23 +1174,23 @@ Enumerations count(double ptMin, double ptMax, char *discr, double workingPoint,
 
   TH1D *hBjetsWithJPinfoMC = new TH1D("hBjetsWithJPinfoMC","",1,ptMin,ptMax);
   hBjetsWithJPinfoMC->Sumw2();
-  tBMC->Draw("jtpt>>hBjetsWithJPinfoMC",Form("weight*(abs(refparton_flavorForB)==5&&discr_prob>0&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f&&trigIndex>=2&&pthat>%f)",cbinlo,cbinhi,etalo,etahi,ptHatMin));
-  //tBMC->Draw("jtpt>>hBjetsWithJPinfoMC",Form("weight*(abs(refparton_flavorForB)==5&&discr_prob>0&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f)",cbinlo,cbinhi,etalo,etahi));
+  tBMC->Draw("jtptB>>hBjetsWithJPinfoMC",Form("weight*(abs(refparton_flavorForB)==5&&discr_prob>0&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f&&jet65&&pthat>%f&&refpt>0)",cbinlo,cbinhi,etalo,etahi,ptHatMin));
+  //tBMC->Draw("jtptB>>hBjetsWithJPinfoMC",Form("weight*(abs(refparton_flavorForB)==5&&discr_prob>0&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f)",cbinlo,cbinhi,etalo,etahi));
 
   TH1D *hBjetsWithCSVinfoMC = new TH1D("hBjetsWithCSVinfoMC","",1,ptMin,ptMax);
   hBjetsWithCSVinfoMC->Sumw2();
-  tBMC->Draw("jtpt>>hBjetsWithCSVinfoMC",Form("weight*(abs(refparton_flavorForB)==5&&discr_prob>0&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f&&trigIndex>=2&&pthat>%f)",cbinlo,cbinhi,etalo,etahi,ptHatMin));
-  //tBMC->Draw("jtpt>>hBjetsWithCSVinfoMC",Form("weight*(abs(refparton_flavorForB)==5&&discr_prob>0&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f)",cbinlo,cbinhi,etalo,etahi));
+  tBMC->Draw("jtptB>>hBjetsWithCSVinfoMC",Form("weight*(abs(refparton_flavorForB)==5&&discr_prob>0&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f&&jet65&&pthat>%f&&refpt>0)",cbinlo,cbinhi,etalo,etahi,ptHatMin));
+  //tBMC->Draw("jtptB>>hBjetsWithCSVinfoMC",Form("weight*(abs(refparton_flavorForB)==5&&discr_prob>0&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f)",cbinlo,cbinhi,etalo,etahi));
  
   TH1D *hTaggedJetsData = new TH1D("hTaggedJetsData","",1,ptMin,ptMax);
   hTaggedJetsData->Sumw2();
-  tdata->Draw("jtpt>>hTaggedJetsData",Form("weight*(%s>=%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f)",discr,workingPoint,cbinlo,cbinhi,etalo,etahi));
-  //tdata->Draw("jtpt>>hTaggedJetsData",Form("(%s>=%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f)",discr,workingPoint,cbinlo,cbinhi,etalo,etahi));
+  tdata->Draw("jtptB>>hTaggedJetsData",Form("weight*(%s>=%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f)",discr,workingPoint,cbinlo,cbinhi,etalo,etahi));
+  //tdata->Draw("jtptB>>hTaggedJetsData",Form("(%s>=%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f)",discr,workingPoint,cbinlo,cbinhi,etalo,etahi));
 
   TH1D *hUntaggedJetsData = new TH1D("hUntaggedJetsData","",1,ptMin,ptMax);
   hUntaggedJetsData->Sumw2();
-  tdata->Draw("jtpt>>hUntaggedJetsData",Form("weight*(%s<%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f)",discr,workingPoint,cbinlo,cbinhi,etalo,etahi));
-  //tdata->Draw("jtpt>>hUntaggedJetsData",Form("(%s<%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f)",discr,workingPoint,cbinlo,cbinhi,etalo,etahi));
+  tdata->Draw("jtptB>>hUntaggedJetsData",Form("weight*(%s<%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f)",discr,workingPoint,cbinlo,cbinhi,etalo,etahi));
+  //tdata->Draw("jtptB>>hUntaggedJetsData",Form("(%s<%f&&bin>=%d&&bin<%d&&abs(jteta)>%f&&abs(jteta)<%f)",discr,workingPoint,cbinlo,cbinhi,etalo,etahi));
 
 
   Enumerations res;
